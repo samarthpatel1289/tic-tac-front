@@ -11,6 +11,7 @@ const TicTacToe = () => {
   const [game, setGame] = useState(null);
   const [moves, setMoves] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [timeTakeforAPI, settimeTakeforAPI] = useState(parseInt('10'));
   const [selectedOption, setSelectedOption] = useState('node');
   const initialGameState = {
     board: [
@@ -31,10 +32,15 @@ const TicTacToe = () => {
 
   const createGame = async () => {
     try {
+      const startTime = window.performance.now();
       const response = await axios.post(`${apiUrl}/`, {
         player_x: 'Player X',
         player_o: 'Player O',
       });
+      const endTime = window.performance.now();
+      const timeTaken = Math.floor(endTime - startTime);
+      settimeTakeforAPI(timeTaken);
+      console.log(`Time taken: ${timeTaken}ms`);
       setGame(response.data);
     } catch (error) {
       setErrorMsg('An error occurred while creating the game.');
@@ -48,7 +54,12 @@ const TicTacToe = () => {
 
   const getGame = async (id) => {
     try {
+      const startTime = window.performance.now();
       const response = await axios.get(`${apiUrl}/${id}`);
+      const endTime = window.performance.now();
+      const timeTaken = Math.floor(endTime - startTime);
+      settimeTakeforAPI(timeTaken);
+      console.log(`Time taken: ${timeTaken}ms`);
       setGame(response.data);
       setMoves(response.data.moves);
     } catch (error) {
@@ -65,11 +76,16 @@ const TicTacToe = () => {
     }
     try {
       const player = moves.length % 2 === 0 ? 'X' : 'O';
+      const startTime = window.performance.now();
       const response = await axios.post(`${apiUrl}/${game.id}/moves/`, {
         player,
         x,
         y,
       });
+      const endTime = window.performance.now();
+      const timeTaken = Math.floor(endTime - startTime);
+      settimeTakeforAPI(timeTaken);
+      console.log(`Time taken: ${timeTaken}ms`);
       if (typeof response.data.move === 'object')
       {
         console.log("Yes It is a object")
@@ -178,6 +194,10 @@ const TicTacToe = () => {
           />
           Python
         </label>
+      </div>
+      <div>
+      <label style={{ marginLeft: '10px' }}>
+        Api took {timeTakeforAPI}ms </label>
       </div>
       {game && (
         <div>
